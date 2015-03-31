@@ -71,7 +71,9 @@ try {
 // Load an environment local configuration file.
 // You can use a file like app_local.php to provide local overrides to your
 // shared configuration.
-//Configure::load('app_local', 'default');
+if (isset($_ENV['CAKE_ENV'])) {
+    Configure::load('app_' . $_ENV['CAKE_ENV'], 'default');
+}
 
 // When debug = false the metadata cache should last
 // for a very very long time, as we don't want
