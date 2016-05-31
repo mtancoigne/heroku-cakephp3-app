@@ -26,7 +26,7 @@ Vagrant.configure('2') do |config|
   config.vm.box = 'minimal/trusty64'
 
   # Host name
-  config.vm.hostname 'fcc-vagrant-php'
+  config.vm.hostname = 'fcc-vagrant-php'
 
   # Network config
   # --------------
