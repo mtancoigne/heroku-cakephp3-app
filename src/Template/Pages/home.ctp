@@ -14,13 +14,18 @@
  */
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\Debugger;
 use Cake\Network\Exception\NotFoundException;
 
 $this->layout = false;
 
-$cakeDescription = 'CakePHP: the rapid development php framework';
+if (!Configure::read('debug')):
+    throw new NotFoundException('Please replace src/Template/Pages/home.ctp with your own version.');
+endif;
+
+$cakeDescription = 'CakePHP: the rapid development PHP framework';
 ?>
 <!DOCTYPE html>
 <html>
@@ -42,23 +47,27 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
         </div>
     </header>
     <div id="content">
-        <?php
-        if (Configure::read('debug')):
-            Debugger::checkSecurityKeys();
-        endif;
-        ?>
-        <p id="url-rewriting-warning" style="background-color:#e32; color:#fff;display:none">
-            URL rewriting is not properly configured on your server.
-            1) <a target="_blank" href="http://book.cakephp.org/3.0/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
-            2) <a target="_blank" href="http://book.cakephp.org/3.0/en/development/configuration.html#general-configuration" style="color:#fff;">I don't / can't use URL rewriting</a>
-        </p>
-
         <div class="row">
-            <div class="columns large-5 platform checks">
-                <?php if (version_compare(PHP_VERSION, '5.4.16', '>=')): ?>
-                    <p class="success">Your version of PHP is 5.4.16 or higher.</p>
+            <div class="columns large-12 ctp-warning checks">
+                Please be aware that this page will not be shown if you turn off debug mode unless you replace src/Template/Pages/home.ctp with your own version.
+            </div>
+            <?php Debugger::checkSecurityKeys(); ?>
+            <div id="url-rewriting-warning" class="columns large-12 url-rewriting checks">
+                <p class="problem">URL rewriting is not properly configured on your server.</p>
+                <p>
+                    1) <a target="_blank" href="http://book.cakephp.org/3.0/en/installation.html#url-rewriting">Help me configure it</a>
+                </p>
+                <p>
+                    2) <a target="_blank" href="http://book.cakephp.org/3.0/en/development/configuration.html#general-configuration">I don't / can't use URL rewriting</a>
+                </p>
+            </div>
+
+            <div class="columns large-12 checks">
+                <h4>Environment</h4>
+                <?php if (version_compare(PHP_VERSION, '5.5.9', '>=')): ?>
+                    <p class="success">Your version of PHP is 5.5.9 or higher (detected <?= phpversion() ?>).</p>
                 <?php else: ?>
-                    <p class="problem">Your version of PHP is too low. You need PHP 5.4.16 or higher to use CakePHP.</p>
+                    <p class="problem">Your version of PHP is too low. You need PHP 5.5.9 or higher to use CakePHP (detected <?= phpversion() ?>).</p>
                 <?php endif; ?>
 
                 <?php if (extension_loaded('mbstring')): ?>
@@ -80,8 +89,9 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
                 <?php else: ?>
                     <p class="problem">Your version of PHP does NOT have the intl extension loaded.</p>
                 <?php endif; ?>
-            </div>
-            <div class="columns large-6 filesystem checks">
+                <hr>
+
+                <h4>Filesystem</h4>
                 <?php if (is_writable(TMP)): ?>
                     <p class="success">Your tmp directory is writable.</p>
                 <?php else: ?>
@@ -100,10 +110,9 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
                 <?php else: ?>
                     <p class="problem">Your cache is NOT working. Please check the settings in config/app.php</p>
                 <?php endif; ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="columns large-12  database checks">
+
+                <hr>
+                <h4>Database</h4>
                 <?php
                     try {
                         $connection = ConnectionManager::get('default');
@@ -124,8 +133,17 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
                 <?php else: ?>
                     <p class="problem">CakePHP is NOT able to connect to the database.<br /><br /><?= $errorMsg ?></p>
                 <?php endif; ?>
+
+                <hr>
+                <h4>DebugKit</h4>
+                <?php if (Plugin::loaded('DebugKit')): ?>
+                    <p class="success">DebugKit is loaded.</p>
+                <?php else: ?>
+                    <p class="problem">DebugKit is NOT loaded. You need to either install pdo_sqlite, or define the "debug_kit" connection name.</p>
+                <?php endif; ?>
             </div>
         </div>
+
         <div class="row">
             <div class="columns large-6">
                 <h3>Editing this Page</h3>
@@ -144,8 +162,8 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
                 <p>
             </div>
         </div>
-
         <hr/>
+
         <div class="row">
             <div class="columns large-12">
                 <h3 class="">More about Cake</h3>
@@ -156,32 +174,71 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
                     Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.
                 </p>
 
+                <h3>Help and Bug Reports</h3>
                 <ul>
-                    <li><a href="http://cakefoundation.org/">Cake Software Foundation</a>
-                    <ul><li>Promoting development related to CakePHP</li></ul></li>
-                    <li><a href="http://www.cakephp.org">CakePHP</a>
-                    <ul><li>The Rapid Development Framework</li></ul></li>
-                    <li><a href="http://book.cakephp.org/3.0/en/">CakePHP Documentation</a>
-                    <ul><li>Your Rapid Development Cookbook</li></ul></li>
-                    <li><a href="http://api.cakephp.org/3.0/">CakePHP API</a>
-                    <ul><li>Quick Reference</li></ul></li>
-                    <li><a href="http://bakery.cakephp.org">The Bakery</a>
-                    <ul><li>Everything CakePHP</li></ul></li>
-                    <li><a href="http://plugins.cakephp.org">CakePHP plugins repo</a>
-                    <ul><li>A comprehensive list of all CakePHP plugins created by the community</li></ul></li>
-                    <li><a href="https://groups.google.com/group/cake-php">CakePHP Google Group</a>
-                    <ul><li>Community mailing list</li></ul></li>
-                    <li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
-                    <ul><li>Live chat about CakePHP</li></ul></li>
-                    <li><a href="https://github.com/cakephp/">CakePHP Code</a>
-                    <ul><li>For the Development of CakePHP Git repository, Downloads</li></ul></li>
-                    <li><a href="https://github.com/cakephp/cakephp/issues">CakePHP Issues</a>
-                    <ul><li>CakePHP issues and pull requests</li></ul></li>
+                    <li>
+                        <a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
+                        <ul><li>Live chat about CakePHP</li></ul>
+                    </li>
+                    <li>
+                        <a href="https://github.com/cakephp/cakephp/issues">CakePHP Issues</a>
+                        <ul><li>CakePHP issues and pull requests</li></ul>
+                    </li>
+                    <li>
+                        <a href="https://groups.google.com/group/cake-php">CakePHP Google Group</a>
+                        <ul><li>Community mailing list</li></ul>
+                    </li>
+                </ul>
+
+                <h3>Docs and Downloads</h3>
+                <ul>
+                    <li>
+                        <a href="http://api.cakephp.org/3.0/">CakePHP API</a>
+                        <ul><li>Quick Reference</li></ul>
+                    </li>
+                    <li>
+                        <a href="http://book.cakephp.org/3.0/en/">CakePHP Documentation</a>
+                        <ul><li>Your Rapid Development Cookbook</li></ul>
+                    </li>
+                    <li>
+                        <a href="http://bakery.cakephp.org">The Bakery</a>
+                        <ul><li>Everything CakePHP</li></ul>
+                    </li>
+                    <li>
+                        <a href="http://plugins.cakephp.org">CakePHP plugins repo</a>
+                        <ul><li>A comprehensive list of all CakePHP plugins created by the community</li></ul>
+                    </li>
+                    <li>
+                        <a href="https://github.com/cakephp/">CakePHP Code</a>
+                        <ul><li>For the Development of CakePHP Git repository, Downloads</li></ul>
+                    </li>
+                    <li>
+                        <a href="https://github.com/FriendsOfCake/awesome-cakephp">CakePHP Awesome List</a>
+                        <ul><li>A curated list of amazingly awesome CakePHP plugins, resources and shiny things.</li></ul>
+                    </li>
+                    <li>
+                        <a href="http://www.cakephp.org">CakePHP</a>
+                        <ul><li>The Rapid Development Framework</li></ul>
+                    </li>
+                </ul>
+
+                <h3>Training and Certification</h3>
+                <ul>
+                    <li>
+                        <a href="http://cakefoundation.org/">Cake Software Foundation</a>
+                        <ul><li>Promoting development related to CakePHP</li></ul>
+                    </li>
+                    <li>
+                        <a href="http://training.cakephp.org/">CakePHP Training</a>
+                        <ul><li>Learn to use the CakePHP framework</li></ul>
+                    </li>
+                    <li>
+                        <a href="http://certification.cakephp.org/">CakePHP Certification</a>
+                        <ul><li>Become a certified CakePHP developer</li></ul>
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
-    <footer>
-    </footer>
 </body>
 </html>
