@@ -24,6 +24,7 @@
 # Installation settings for a PHP box with CakePHP installed
 PROJECT="my_project" # we would want a name passed to it via te first argument, $1
 DB="my_app" # the name of postgreSQL DB we need to provision, maybe $2
+SERVER="fcc-vagrant-php"
 
 # This file is executed by root user - sudo not needed
 # But do not create any directory
@@ -56,10 +57,13 @@ echo "---------------------------------------------"
 #  - heroku-toolbelt : CLI for Heroku
 #  - ruby : needed for heroku toolbelt
 #  - curl : needed to download things
-apt-get install -y --no-install-recommends heroku-toolbelt ruby dos2unix man curl
+#  - Apache2 is installed here so we can update its config before the modules install.
+apt-get install -y --no-install-recommends heroku-toolbelt ruby dos2unix man curl apache2
+# Set Apache ServerName.
+echo "ServerName ${SERVER}" >> /etc/apache2/apache2.conf;
 
 # Installing the PHP dev stack
-apt-get install -y --no-install-recommends git apache2 postgresql postgresql-contrib phpunit php5 php5-intl php5-pgsql php5-mcrypt php5-sqlite php5-apcu php5-cli
+apt-get install -y --no-install-recommends git postgresql postgresql-contrib phpunit php5 php5-intl php5-pgsql php5-mcrypt php5-sqlite php5-apcu php5-cli
 
 # Install Heroku CLI
 su - vagrant -c "heroku --version > /dev/null 2>&1"
@@ -67,41 +71,37 @@ su - vagrant -c "heroku --version > /dev/null 2>&1"
 # Enabling PHP mcrypt
 php5enmod mcrypt
 
-# Install postgresql and setup user
+# Install postgresql and setup user and DB
 echo "---------------------------------------------"
-echo "------- Setting up postgresql ---------------"
+echo "---- Setting up postgresql with ${DB} DB ----"
 echo "---------------------------------------------"
+# Creating superuser (-s) vagrant
 su - postgres -c "createuser -s vagrant"
 su - vagrant -c "createdb ${DB}"
-
-# Creating "my_app" DB
-echo "---------------------------------------------"
-echo "------- Creating empty 'my_app' DB ----------"
-echo "---------------------------------------------"
-#mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS my_app DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci"
-#mysql -uroot -proot -e "GRANT ALL ON my_app.* TO 'my_app'@'localhost' IDENTIFIED BY 'secret'"
-#mysql -uroot -proot -e "GRANT ALL ON my_app.* TO 'my_app'@'%' IDENTIFIED BY 'secret'"
-#mysql -uroot -proot -e "FLUSH PRIVILEGES"
-
-# Installing composer system-wide
-echo "---------------------------------------------"
-echo "------- Setting up Composer -----------------"
-echo "---------------------------------------------"
-cd /vagrant
-if [ ! -e composer.phar ]; then
-  curl -sS https://getcomposer.org/installer | sudo php
-  export COMPOSER_PROCESS_TIMEOUT=600
-  yes | php composer.phar install --prefer-dist
-else
-  php composer.phar self-update
-  yes | php composer.phar update
-fi
+# Setting default password for vagrant so Cake can connect
+su - vagrant -c "psql -U vagrant -d ${DB} -c \"ALTER USER \\\"vagrant\\\" WITH PASSWORD 'vagrant';\""
 
 # Copying apache config
 echo "---------------------------------------------"
 echo "------- Configuring Apache2 -----------------"
 echo "---------------------------------------------"
-cp vagrant/000-default.conf /etc/apache2/sites-available/000-default.conf
+cp /vagrant/vagrant/000-default.conf /etc/apache2/sites-available/000-default.conf
 service apache2 restart
+
+# Adding user to www-data
+usermod -a -G www-data vagrant
+
+# Downloading composer in site dir.
+echo "---------------------------------------------"
+echo "- Setting up Composer and Cake dependencies -"
+echo "---------------------------------------------"
+if [ ! -e composer.phar ]; then
+  curl -sS https://getcomposer.org/installer | sudo php
+  export COMPOSER_PROCESS_TIMEOUT=600
+  yes | sudo -u vagrant php composer.phar install --prefer-dist
+else
+  php composer.phar self-update
+  yes | sudo -u vagrant php composer.phar update
+fi
 
 exit 0

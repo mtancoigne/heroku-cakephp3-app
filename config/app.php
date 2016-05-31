@@ -227,7 +227,7 @@ return [
              */
             //'port' => 'nonstandard_port_number',
             'username' => 'vagrant',
-            'password' => '',
+            'password' => 'vagrant',
             'database' => 'my_app',
             'encoding' => 'utf8',
             'timezone' => 'UTC',
@@ -253,7 +253,7 @@ return [
              * which is the recommended value in production environments
              */
             //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
-            
+
             'url' => env('DATABASE_URL', null),
         ],
 
