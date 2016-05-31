@@ -1,6 +1,6 @@
 <?php
 $db = parse_url(env('DATABASE_URL'));
-die($db);
+die(var_dump($db));
 return [
     'debug' => false,
 
