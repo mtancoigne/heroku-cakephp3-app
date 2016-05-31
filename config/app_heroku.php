@@ -54,7 +54,7 @@ return [
             'host' => $db['host'],
             'username' => $db['user'],
             'password' => $db['pass'],
-            'database' => ltrim($db["path"],'/');//substr($db['path'], 1),
+            'database' => ltrim($db["path"],'/'),//substr($db['path'], 1),
             'port' => $db["port"],
             'encoding' => 'utf8',
             'timezone' => 'UTC',
