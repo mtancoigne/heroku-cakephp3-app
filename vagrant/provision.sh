@@ -85,7 +85,8 @@ su - vagrant -c "psql -U vagrant -d ${DB} -c \"ALTER USER \\\"vagrant\\\" WITH P
 echo "---------------------------------------------"
 echo "------- Configuring Apache2 -----------------"
 echo "---------------------------------------------"
-cp /vagrant/vagrant/000-default.conf /etc/apache2/sites-available/000-default.conf
+cd /vagrant
+cp vagrant/000-default.conf /etc/apache2/sites-available/000-default.conf
 service apache2 restart
 
 # Adding user to www-data
