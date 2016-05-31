@@ -82,8 +82,8 @@ try {
 // Load an environment local configuration file.
 // You can use a file like app_local.php to provide local overrides to your
 // shared configuration.
-if (isset($_ENV['CAKE_ENV'])) {
-    Configure::load('app_' . $_ENV['CAKE_ENV'], 'default');
+if (isset($_ENV['HEROKU_APP_DIR'])) {
+    Configure::load('app_heroku', 'default');
 }
 
 // When debug = false the metadata cache should last
