@@ -34,6 +34,8 @@ Vagrant.configure('2') do |config|
   config.vm.network :private_network, ip: '192.168.56.101'
   # Binding ports, so you can still access with localhost:<port>
   config.vm.network :forwarded_port, guest: 80, host: 8080, auto_correct: true
+  #config.vm.network :forwarded_port, guest: 22, host: 2222, auto_correct: true
+  config.vm.network :forwarded_port, guest: 5432, host: 5434, auto_correct:true
 
   # VirtualBox config
   config.vm.provider :virtualbox do |vb|
