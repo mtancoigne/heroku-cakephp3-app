@@ -1,6 +1,6 @@
 <?php
 $db = parse_url(env('DATABASE_URL'));
-die(var_dump($db));
+
 return [
     'debug' => false,
 
@@ -52,14 +52,14 @@ return [
             'driver' => 'Cake\Database\Driver\Postgres',
             'persistent' => false,
             'host' => $db['host'],
-            'username' => $db['user'],
-            'password' => $db['pass'],
+            'username' => $db['username'],
+            'password' => $db['password'],
             'database' => substr($db['path'], 1),
             'encoding' => 'utf8',
             'timezone' => 'UTC',
             'cacheMetadata' => true,
             'quoteIdentifiers' => false,
-            'url' => env('DATABASE_URL', null),
+            //'url' => env('DATABASE_URL', null),
         ],
     ],
 
