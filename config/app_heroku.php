@@ -49,12 +49,13 @@ return [
     'Datasources' => [
         'default' => [
             'className' => 'Cake\Database\Connection',
-            'driver' => 'Cake\Database\Driver\Postgres',
+            'driver' => 'Cake\Database\Driver\Postgres-pdo',
             'persistent' => false,
             'host' => $db['host'],
-            'username' => $db['username'],
-            'password' => $db['password'],
-            'database' => substr($db['path'], 1),
+            'username' => $db['user'],
+            'password' => $db['pass'],
+            'database' => ltrim($db["path"],'/');//substr($db['path'], 1),
+            'port' => $db["port"],
             'encoding' => 'utf8',
             'timezone' => 'UTC',
             'cacheMetadata' => true,
