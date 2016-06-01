@@ -68,9 +68,6 @@ apt-get install -y --no-install-recommends git postgresql postgresql-contrib php
 # Install Heroku CLI
 su - vagrant -c "heroku --version > /dev/null 2>&1"
 
-# Enabling PHP mcrypt
-php5enmod mcrypt
-
 # Install postgresql and setup user and DB
 echo "---------------------------------------------"
 echo "---- Setting up postgresql with ${DB} DB ----"
@@ -87,15 +84,20 @@ echo "------- Configuring Apache2 -----------------"
 echo "---------------------------------------------"
 cd /vagrant
 cp vagrant/000-default.conf /etc/apache2/sites-available/000-default.conf
+# Enabling PHP extensions
+php5enmod mcrypt
+# Enabling mod_rewrite
+a2enmod rewrite
+# Restarting apache for changes to take effects
 service apache2 restart
-
-# Adding user to www-data
+# Adding user vagrant to www-data group for file permissions
 usermod -a -G www-data vagrant
 
 # Downloading composer in site dir.
 echo "---------------------------------------------"
 echo "- Setting up Composer and Cake dependencies -"
 echo "---------------------------------------------"
+# Installing composer
 if [ ! -e composer.phar ]; then
   curl -sS https://getcomposer.org/installer | sudo php
   export COMPOSER_PROCESS_TIMEOUT=600
@@ -104,5 +106,16 @@ else
   php composer.phar self-update
   yes | sudo -u vagrant php composer.phar update
 fi
+echo "---------------------------------------------"
+echo "-------- Migrating Beer Plugin DB -----------"
+echo "---------------------------------------------"
+# Migrating sample DB
+sudo -u vagrant ./bin/cake migrations migrate -p Beers
+
+# All done
+echo "---------------------------------------------"
+echo "Everything is up. Use 'vagrant ssh' to log on"
+echo "your new box."
+echo "---------------------------------------------"
 
 exit 0
