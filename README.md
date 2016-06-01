@@ -32,8 +32,22 @@ heroku create
 git push heroku master
 # Optionnal: enable postgreSQL on Heroku:
 heroku addons:create heroku-postgresql:hobby-dev
+# Optionnal: if you want to test the Beer sample plugin (postgreSQL must have been enabled)
+heroku run "./bin/cake migrations migrate -p Beers"
 
 # Test the heroku box :
-heroku open <name-of-the-heroku-app>
+heroku open
 ```
-That's all for now, but tests are coming (DB migrations, etc...)
+
+## Test: the Beer sample plugin
+We included a sample plugin about beers and beer notations. It is really basic and
+is activated by default in the box.
+
+If you don't need it anymore, you can disable it this way:
+
+```bash
+./bin/cake plugin unload Beers
+
+# Now you can remove the plugin physically:
+rm -rf plugins/Beers
+```
