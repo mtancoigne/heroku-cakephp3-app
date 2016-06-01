@@ -24,7 +24,7 @@
 # Installation settings for a PHP box with CakePHP installed
 PROJECT="my_project" # we would want a name passed to it via te first argument, $1
 DB="my_app" # the name of postgreSQL DB we need to provision, maybe $2
-SERVER="fcc-vagrant-php"
+SERVER="vagrant-cake3-heroku"
 
 # This file is executed by root user - sudo not needed
 # But do not create any directory
