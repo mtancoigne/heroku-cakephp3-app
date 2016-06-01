@@ -8,7 +8,10 @@ return [
         'salt' => env('SALT'),
     ],
 
-    'Cache' => [
+    /********************************
+    MEMCACHE DISABLED FOR NOW UNTIL #2 IS FIXED
+    ********************************/
+    /*'Cache' => [
         'default' => [
             'className' => 'Memcached',
             'prefix' => 'myapp_cake_',
@@ -44,7 +47,7 @@ return [
             'password' => env('MEMCACHIER_PASSWORD'),
             'duration' => '+1 years',
         ],
-    ],
+    ],*/
 
     'Datasources' => [
         'default' => [

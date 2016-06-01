@@ -82,8 +82,10 @@ try {
 // Load an environment local configuration file.
 // You can use a file like app_local.php to provide local overrides to your
 // shared configuration.
-if (isset($_ENV['HEROKU_APP_DIR'])) {
+if (isset($_ENV['DYNO'])) {
     Configure::load('app_heroku', 'default');
+    // DISABLING CACHE
+    Cache::disable();
 }
 
 // When debug = false the metadata cache should last
@@ -196,7 +198,7 @@ Plugin::load('Migrations');
 
 // Only try to load DebugKit in development mode
 // Debug Kit should not be installed on a production system
-if (Configure::read('debug') && empty(getenv('HEROKU_APP_DIR'))) {
+if (Configure::read('debug')) {
     Plugin::load('DebugKit', ['bootstrap' => true, 'routes'=>true]);
 }
 
@@ -223,5 +225,3 @@ Type::build('datetime')
     ->useImmutable();
 
 Plugin::load('Beers', ['bootstrap' => false, 'routes' => true]);
-
-Plugin::load('Migrations');
